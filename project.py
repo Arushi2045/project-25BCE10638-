@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import random
 
+# defines a color palette 
 bg_color = "#f7f0e8"         
 fg_color = "#3c403d"         
 button_color = "#a2b595"     
@@ -19,18 +20,23 @@ name = ""
 def start_game():
     global target, attempts, max_attempts
     global name
+    # get the player's name from the entry widget
     name = name_entry
+    # check if a name was entered
     if not name:
         messagebox.showerror("Error", "Please enter your name to start.")
         return
+    # generate the new random number (1 to 20)
     target = random.randint(1, 20)
     attempts = 0
     max_attempts = 10
     welcome_label.config(text=f"Hi, {name}! Guess a number from 1 to 20.", fg=fg_color)
     feedback_label.config(text=f"You have {max_attempts} attempts. Good luck!", fg=fg_color)
     attempts_label.config(text=f"Attempts: {attempts} / {max_attempts}", fg=fg_color)
+    # enable the guessing components
     guess_button.config(state=tk.NORMAL, bg=button_color, activebackground=button_hover_color)
     guess_entry.config(state=tk.NORMAL, bg=entry_bg, fg=fg_color, insertbackground=fg_color)
+    # disable the start button and name entry
     start_button.config(state=tk.DISABLED, bg=disabled_color) 
     name_entry.config(state=tk.DISABLED, bg=entry_bg)
     guess_entry.focus_set()
@@ -39,6 +45,7 @@ def check_guess():
     global attempts, target, max_attempts
     guess_str = guess_entry.strip()
     guess_entry.delete(0, tk.END) 
+    #input validation
     if not guess_str.isdigit():
         feedback_label.config(text="Invalid input. Please enter a number (1-20).", fg=highlight_color)
         return
@@ -46,15 +53,20 @@ def check_guess():
     if not 1 <= guess <= 20:
         feedback_label.config(text="Number must be between 1 and 20.", fg=highlight_color)
         return
+    # increment attempt counter
     attempts += 1
+    # Check guess
     if guess == target:
         feedback_label.config(text=f"🎉 CORRECT GUESS! YOU WON!! You made {attempts} attempts! 🎉", fg=win_color)
         end_game(win=True)
     elif guess > target:
+        # guess is too high
         feedback_label.config(text="Your number was too large. Guess again.", fg=fg_color)
     else:
+        # guess is too low
         feedback_label.config(text="Your number was too small. Guess again.", fg=fg_color)
-    
+
+    # check loss condition
     if attempts >= max_attempts:
         if guess != target: 
             feedback_label.config(text=f"❌ YOU LOSE! The number was {target}. ❌", fg=highlight_color)
@@ -240,4 +252,5 @@ def on_return_key(event):
         check_guess()
 
 root.bind('<Return>', on_return_key) 
+
 root.mainloop()
